@@ -1,58 +1,106 @@
 <?php
 namespace strong2much\imap;
 
+/**
+ * Mail class file
+ *
+ * Helper class to be filled with the properties of a message.
+ */
 class Mail
 {
-	public $id;
-	public $date;
-	public $subject;
+    /**
+     * @var integer the UID of the message
+     */
+    public $UID;
 
-	public $fromName;
-	public $fromAddress;
+    /**
+     * @var string the date of the message
+     */
+    public $date;
 
-	public $to = array();
-	public $toString;
-	public $cc = array();
-	public $replyTo = array();
+    /**
+     * @var string the subject
+     */
+    public $subject;
 
-	public $textPlain;
-	public $textHtml;
+    /**
+     * @var string the sender name
+     */
+    public $fromName;
 
-	/** @var MailAttachment[] */
-	protected $attachments = array();
+    /**
+     * @var string the sender email address
+     */
+    public $fromAddress;
 
-	public function addAttachment(MailAttachment $attachment)
+    /**
+     * @var array recipients
+     */
+    public $to = array();
+
+    /**
+     * @var string recipients
+     */
+    public $toString;
+
+    /**
+     * @var array CC
+     */
+    public $cc = array();
+
+    /**
+     * @var array reply_to addresses and names
+     */
+    public $replyTo = array();
+
+    /**
+     * @var string the body text
+     */
+    public $textPlain;
+
+    /**
+     * @var string the body html
+     */
+    public $textHtml;
+
+    /**
+     * @var string holds a copy of the original body html
+     */
+    public $textHtmlOriginal;
+
+    /**
+     * @var Attachment[] the attachments of the message
+     */
+    public $attachments;
+
+    /**
+     * Fetches internal message links so they have local references (where attachments were saved to)
+     * @param $baseUrl
+     */
+    public function fetchMessageInternalLinks($baseUrl)
     {
-		$this->attachments[$attachment->id] = $attachment;
-	}
+        if ($this->textHtml) {
+            foreach ($this->attachments as $attachment) {
+                if (isset($attachment->id)) {
+                    $filename = basename($attachment->filePath);
+                    $this->textHtml = preg_replace('/(<img[^>]*?)src=["\']?ci?d:' . preg_quote($attachment->id) . '["\']?/is', '\\1 src="' . $baseUrl . $filename . '"', $this->textHtml);
+                }
+            }
+        }
+    }
 
-	/**
-	 * @return MailAttachment[]
-	 */
-	public function getAttachments()
+    /**
+     * Cleans textHtml from unwanted html tags
+     * @param array $stripTags the tags to remove (you can add those you do not wish)
+     */
+    public function fetchMessageHtmlTags($stripTags = array('html', 'body', 'head', 'meta'))
     {
-		return $this->attachments;
-	}
+        if ($this->textHtml) {
+            foreach ($stripTags as $tag) {
+                $this->textHtml = preg_replace('/<\/?' . $tag . '.*?>/is', '', $this->textHtml);
+            }
+            $this->textHtml = trim($this->textHtml, " \r\n");
+        }
+    }
 
-	/**
-	 * Get array of internal HTML links placeholders
-	 * @return array attachmentId => link placeholder
-	 */
-	public function getInternalLinksPlaceholders()
-    {
-		return preg_match_all('/=["\'](ci?d:([\w\.%*@-]+))["\']/i', $this->textHtml, $matches) ? array_combine($matches[2], $matches[1]) : array();
-
-	}
-
-	public function replaceInternalLinks($baseUri)
-    {
-		$baseUri = rtrim($baseUri, '\\/') . '/';
-		$fetchedHtml = $this->textHtml;
-		foreach($this->getInternalLinksPlaceholders() as $attachmentId => $placeholder) {
-			if(isset($this->attachments[$attachmentId])) {
-				$fetchedHtml = str_replace($placeholder, $baseUri . basename($this->attachments[$attachmentId]->filePath), $fetchedHtml);
-			}
-		}
-		return $fetchedHtml;
-	}
 }

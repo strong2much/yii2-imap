@@ -3,16 +3,11 @@
     "type": "yii2-extension",
     "minimum-stability": "dev",
     "prefer-stable": "true",
-    "description": "yii2 extension to read and process mails from IMAP and PHP",
-    "keywords": ["yii2", "extension", "imap", "mail", "inbox"],
+    "description": "yii2 extension to read and process mails from IMAP in PHP",
+    "keywords": ["yii2", "extension", "imap", "mail"],
     "homepage": "https://github.com/strong2much/yii2-imap.git",
     "license": "BSD-3-Clause",
     "authors": [
-        {
-            "name": "Roopan Valiya Veetil",
-            "email": "yiioverflow@gmail.com",
-            "homepage": "http://www.yiioverflow.com/"
-        },
         {
           "name": "Denis A. Tatarnikov",
           "email": "strong2much@gmail.com",
