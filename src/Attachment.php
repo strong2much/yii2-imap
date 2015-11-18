@@ -14,6 +14,11 @@ class Attachment
     public $id;
 
     /**
+     * @var string part id
+     */
+    public $pid;
+
+    /**
      * @var string where it was saved
      */
     public $filePath;
@@ -22,6 +27,11 @@ class Attachment
      * @var string given filename
      */
     public $fileName;
+
+    /**
+     * @var string data associated with the attachment
+     */
+    public $data;
 
     /**
      * @var string subtype i.e. jpeg, gif, zip

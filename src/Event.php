@@ -6,25 +6,23 @@ namespace strong2much\imap;
  *
  * Helper class to be filled with the properties of a sender.
  */
-class Sender
+class Event
 {
     /**
-     * @var string the sender email
+     * Passed on beforeConnect and on afterConnect, on imapError is null
+     * @var string
      */
-    public $fromEmail;
+    public $mailbox;
 
     /**
-     * @var string the sender name
+     * Passed on beforeConnect, on afterConnect and on imapError is null
+     * @var string
      */
-    public $fromName;
+    public $stream;
 
     /**
-     * @var string the reply to email
+     * Passed on imapError event, null on beforeConnect and on afterConnect
+     * @var string
      */
-    public $replyToEmail;
-
-    /**
-     * @var string the reply to name
-     */
-    public $replyToName;
+    public $errorMessage = "";
 }
