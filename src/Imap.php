@@ -1,22 +1,13 @@
 <?php
 
-namespace roopz\imap;
+namespace strong2much\imap;
 
 use Yii;
-use roopz\imap\Mailbox;
-
-/* 
- * 
- * Copyright (c) 2015 by Roopan Valiya Veetil <yiioverflow@gmail.com>.
- * All rights reserved.
- * Date : 29-07-2015
- * Time : 5:20 PM
- * Class can be used for connecting and extracting Email messages.
- * 
- */
+use yii\base\Exception;
+use yii\base\InvalidConfigException;
 
 /**
- * Imap Component
+ * Imap Component. Class can be used for connecting and extracting Email messages.
  *
  * To use Imap, you should configure it in the application configuration like the following,
  *
@@ -24,61 +15,52 @@ use roopz\imap\Mailbox;
  * 'components' => [
  *     ...
  *     'imap' => [
- *         'class' => 'vendor\roopz\yii2-imap\Imap',
- *         'connection' => [
- *             'imapPath' => '{imap.gmail.com:993/imap/ssl}INBOX',
- *             'imapLogin' => 'username',
- *             'imapPassword' => 'password',
- *             'serverEncoding'=>'encoding' // utf-8 default.
+ *         'class' => 'vendor\strong2much\yii2-imap\Imap',
+ *         'config' => [
+ *             'path' => '{imap.gmail.com:993/imap/ssl}INBOX',
+ *             'login' => 'username',
+ *             'password' => 'password',
+ *             'encoding'=>'encoding' // utf-8 default.
  *         ],
  *     ],
  *     ...
  * ],
  * ~~~
 **/
-
 class Imap extends Mailbox
 {
-    
-    private $_connection = [];    
+    private $_config = [];    
 
     /**
-     * @param array
-     * @throws InvalidConfigException on invalid argument.
+     * @param array $connection configuration array
+     * @throws InvalidConfigException
+     * @throws Exception
      */
-    public function setConnection($connection)
+    public function setConfig($connection)
     {
         if (!is_array($connection)) {
-            throw new InvalidConfigException('You should set connection params in your config. Please read yii2-imap doc for more info');
+            throw new InvalidConfigException('Invalid configuration');
         }
-        $this->_connection = $connection;
+        $this->_config = $connection;
+
+        $this->path = $this->_config['path'];
+        $this->login = $this->_config['login'];
+        $this->password = $this->_config['password'];
+        $this->encoding = $this->_config['encoding'];
+        $this->attachmentsDir = $this->_config['attachmentsDir'];
+        if($this->attachmentsDir) {
+            if(!is_dir($this->attachmentsDir)) {
+                throw new Exception('Directory "' . $this->attachmentsDir . '" not found');
+            }
+            $this->attachmentsDir = rtrim(realpath($this->attachmentsDir), '\\/');
+        }
     }
 
     /**
      * @return array
      */
-    public function getConnection()
+    public function getConfig()
     {
-        $this->_connection = $this->createConnection($this->_connection );
-        return $this->_connection;
-    }  
-    
-    /**
-     * @return array
-     */
-    public function createConnection()
-    {
-        $this->imapPath = $this->_connection['imapPath'];
-        $this->imapLogin = $this->_connection['imapLogin'];
-        $this->imapPassword = $this->_connection['imapPassword'];
-        $this->serverEncoding = $this->_connection['serverEncoding'];
-        $this->attachmentsDir = $this->_connection['attachmentsDir'];
-        if($this->attachmentsDir) {
-                if(!is_dir($this->attachmentsDir)) {
-                        throw new Exception('Directory "' . $this->attachmentsDir . '" not found');
-                }
-                $this->attachmentsDir = rtrim(realpath($this->attachmentsDir), '\\/');
-        }
-        return $this;
-    }     
+        return $this->_config;
+    }
 }

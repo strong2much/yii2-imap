@@ -7,20 +7,11 @@ Installation by composer
 ```composer
 {
     "require": {
-       "roopz/yii2-imap": "dev-master"
+       "strong2much/yii2-imap": "dev-master"
     }
 }
 
 Or
 
-$ composer require roopz/yii2-imap "dev-master"
+$ composer require strong2much/yii2-imap "dev-master"
 ```
-
-# Documentation
-[Installation Instructions](http://yiioverflow.com/article/yii2-imap-library-for-yii-framework-applications)
-
-# Contribute
-Feel free to contribute. If you have ideas for examples, add them to the repo and send in a pull request.
-
-# Apreciate
-Dont forgett o Leave me a "star" if you like it. Enjoy coding!

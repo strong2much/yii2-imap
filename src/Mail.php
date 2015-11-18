@@ -1,14 +1,9 @@
 <?php
 
-namespace roopz\imap;
+namespace strong2much\imap;
 
-/**
-   *Copyright (c) 2012 by Barbushin Sergey <barbushin@gmail.com>.
-   *All rights reserved.
-*/
-
-class IncomingMail {
-
+class Mail
+{
 	public $id;
 	public $date;
 	public $subject;
@@ -23,17 +18,20 @@ class IncomingMail {
 
 	public $textPlain;
 	public $textHtml;
-	/** @var IncomingMailAttachment[] */
+
+	/** @var MailAttachment[] */
 	protected $attachments = array();
 
-	public function addAttachment(IncomingMailAttachment $attachment) {
+	public function addAttachment(MailAttachment $attachment)
+    {
 		$this->attachments[$attachment->id] = $attachment;
 	}
 
 	/**
-	 * @return IncomingMailAttachment[]
+	 * @return MailAttachment[]
 	 */
-	public function getAttachments() {
+	public function getAttachments()
+    {
 		return $this->attachments;
 	}
 
@@ -41,12 +39,14 @@ class IncomingMail {
 	 * Get array of internal HTML links placeholders
 	 * @return array attachmentId => link placeholder
 	 */
-	public function getInternalLinksPlaceholders() {
+	public function getInternalLinksPlaceholders()
+    {
 		return preg_match_all('/=["\'](ci?d:([\w\.%*@-]+))["\']/i', $this->textHtml, $matches) ? array_combine($matches[2], $matches[1]) : array();
 
 	}
 
-	public function replaceInternalLinks($baseUri) {
+	public function replaceInternalLinks($baseUri)
+    {
 		$baseUri = rtrim($baseUri, '\\/') . '/';
 		$fetchedHtml = $this->textHtml;
 		foreach($this->getInternalLinksPlaceholders() as $attachmentId => $placeholder) {
@@ -56,11 +56,4 @@ class IncomingMail {
 		}
 		return $fetchedHtml;
 	}
-}
-
-class IncomingMailAttachment {
-
-	public $id;
-	public $name;
-	public $filePath;
 }
