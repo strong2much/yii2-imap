@@ -1,5 +1,4 @@
 <?php
-
 namespace strong2much\imap;
 
 class Mail
